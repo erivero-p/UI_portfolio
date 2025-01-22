@@ -1,10 +1,11 @@
+import { init2048events } from "./2048/2048.js";
+
 // Load the 2048 game
 fetch('2048/2048.html')
     .then(response => response.text())
     .then(html => {
         document.getElementById('2048-game').innerHTML = html;
-        initGame();
-        handleGame();
+        init2048events();
     })
     .catch(error => {
         console.error('Error loading 2048 game:', error);

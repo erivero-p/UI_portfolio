@@ -98,11 +98,18 @@ function setGame() {
     });
 }
 
-function handleGame() {
-    const score = document.getElementById('score-value');
+function handleMovement(moved) {
+    if (moved) {
+        addNewNumber(1);
+        renderGrid();
+        updateScore();
+        handleGameOver();
+    }
+}
+
+function handleKeys() {
     document.addEventListener('keydown', (event) => {
         let moved = false;
-
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
             event.preventDefault(); // Prevent default behavior for arrow keys
         }
@@ -115,79 +122,128 @@ function handleGame() {
         } else if (event.key === 'ArrowRight') {
             moved = moveX('right');
         }
-        if (moved) {
-            addNewNumber(1);
-            renderGrid();
-            score.textContent = actualScore;
-            handleGameOver();
-        }
+        handleMovement(moved);
     });
 }
 
-function compress(row) { 
-    let newRow = row.filter(value => value !== null); // this will remove all null values
-    newRow = newRow.concat(Array(4 - newRow.length).fill(null)); // this will add the missing null values
-    return (newRow);
-}
+function handleSwipe() {
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
 
-function merge(row) {
-    for (let i = 0; i < 3; i++) {
-        if (row[i] !== null && row[i] === row[i + 1]) {
-            row[i] *= 2;
-            row[i + 1] = null;
-            actualScore += row[i];
-        }
+    const threshold = 50; // Minimum distance for a swipe to be registered
+    const gameContainer = document.getElementById('grid-container');
+
+    if (!gameContainer) {
+        console.error('Error: grid-container element not found.');
+        return;
     }
-    return compress(row);
+
+    gameContainer.addEventListener('touchstart', (event) => {
+        touchstartX = event.changedTouches[0].screenX;
+        touchstartY = event.changedTouches[0].screenY;
+    });
+
+    gameContainer.addEventListener('touchmove', (event) => {
+        const touchmoveX = event.changedTouches[0].screenX;
+        const touchmoveY = event.changedTouches[0].screenY;
+        const diffX = touchmoveX - touchstartX;
+        const diffY = touchmoveY - touchstartY;
+
+        if (Math.abs(diffY) > Math.abs(diffX)) {
+            event.preventDefault(); // Prevent vertical scrolling
+        }
+    }, { passive: false });
+
+    gameContainer.addEventListener('touchend', (event) => {
+        touchendX = event.changedTouches[0].screenX;
+        touchendY = event.changedTouches[0].screenY;
+        handleGesture();
+    });
+
+    function handleGesture() {
+        const diffX = touchendX - touchstartX;
+        const diffY = touchendY - touchstartY;
+        let moved = false;
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (Math.abs(diffX) > threshold) {
+                if (diffX > 0) {
+                    moved = moveX('right');
+                } else {
+                    moved = moveX('left');
+                }
+            }
+        } else {
+            if (Math.abs(diffY) > threshold) {
+                if (diffY > 0) {
+                    moved = moveY('down');
+                } else {
+                    moved = moveY('up');
+                }
+            }
+        }
+        handleMovement(moved);
+    }
 }
 
 function moveX(direction) {
     let moved = false;
     for (let i = 0; i < 4; i++) {
-        let start = i * 4;
-        let row = matrix.slice(start, start + 4);
-        let newRow = [...row]; // ... extracts the elements of the array
-        if (direction === 'right')
-            newRow.reverse();
-        newRow = compress(newRow);
-        newRow = merge(newRow);
-        newRow = compress(newRow);
-        if (direction === 'right')
-            newRow.reverse();
-        for (let j = 0; j < 4; j++) {
-            matrix[start + j] = newRow[j];
+        let row = matrix.slice(i * 4, i * 4 + 4);
+        if (direction === 'right') {
+            row = row.reverse();
         }
-        if (JSON.stringify(newRow) !== JSON.stringify(row))
-            moved = true;
+        const newRow = slide(row);
+        if (direction === 'right') {
+            newRow.reverse();
+        }
+        for (let j = 0; j < 4; j++) {
+            if (matrix[i * 4 + j] !== newRow[j]) {
+                moved = true;
+                matrix[i * 4 + j] = newRow[j];
+            }
+        }
     }
-    if (moved) saveMatrix();
-    return (moved);
+    return moved;
 }
 
 function moveY(direction) {
     let moved = false;
-
-    for (let j = 0; j < 4; j++) {
-        let col = [];
-        for (let i = 0; i < 4; i++) {
-            col.push(matrix[i * 4 + j]);
+    for (let i = 0; i < 4; i++) {
+        let column = [matrix[i], matrix[i + 4], matrix[i + 8], matrix[i + 12]];
+        if (direction === 'down') {
+            column = column.reverse();
         }
-        let newCol = [...col];
-        if (direction === 'down')
-            newCol.reverse();
-        newCol = compress(newCol);
-        newCol = merge(newCol);
-        newCol = compress(newCol);
-        if (direction === 'down')
-            newCol.reverse();
-        for (let i = 0; i < 4; i++) {
-            matrix[i * 4 + j] = newCol[i];
+        const newColumn = slide(column);
+        if (direction === 'down') {
+            newColumn.reverse();
         }
-        if (JSON.stringify(newCol) !== JSON.stringify(col))
-            moved = true;
+        for (let j = 0; j < 4; j++) {
+            if (matrix[i + j * 4] !== newColumn[j]) {
+                moved = true;
+                matrix[i + j * 4] = newColumn[j];
+            }
+        }
     }
-    if (moved) saveMatrix();
-    return (moved);
+    return moved;
+}
+
+function slide(row) {
+    row = row.filter(val => val !== null); // Remove all null values
+    for (let i = 0; i < row.length - 1; i++) {
+        if (row[i] === row[i + 1]) {
+            row[i] *= 2;
+            actualScore += row[i];
+            row[i + 1] = null;
+        }
+    }
+    row = row.filter(val => val !== null); // Remove all null values again
+    while (row.length < 4) {
+        row.push(null);
+    }
+    return row;
 }
 
 function handleGameOver() {
@@ -222,7 +278,8 @@ function updateScore() {
     score.textContent = actualScore;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+export function init2048events() {
     initGame();
-    handleGame();
-});
+    handleKeys();
+    handleSwipe();
+}

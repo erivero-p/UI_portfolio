@@ -109,7 +109,7 @@ h3 {
     display: inline-block;
 }
 
-#game-overlay {
+/* #game-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -121,4 +121,4 @@ h3 {
     align-items: center;
     z-index: 10;
 }
-
+ */
