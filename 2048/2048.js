@@ -146,14 +146,8 @@ function handleSwipe() {
     });
 
     gameContainer.addEventListener('touchmove', (event) => {
-        const touchmoveX = event.changedTouches[0].screenX;
-        const touchmoveY = event.changedTouches[0].screenY;
-        const diffX = touchmoveX - touchstartX;
-        const diffY = touchmoveY - touchstartY;
-
-        if (Math.abs(diffY) > Math.abs(diffX)) {
-            event.preventDefault(); // Prevent vertical scrolling
-        }
+            event.preventDefault(); // Prevents scrolling
+       
     }, { passive: false });
 
     gameContainer.addEventListener('touchend', (event) => {
