@@ -12,10 +12,30 @@
 <body class="dark-theme">
     <!-- Header Section -->
     <header class="header text-center">
+        <div class="language-toggle-container">
+            <div class="language-toggle">
+                <button class="language-btn" data-lang="en">
+                    <img class="rounded-circle" src="https://flagcdn.com/w40/gb.png" alt="English">
+                </button>
+                <button class="language-btn" data-lang="es">
+                    <img class="rounded-circle" src="https://flagcdn.com/w40/es.png" alt="Español">
+                </button>
+                <div class="slider"></div>
+            </div>
+        </div>
         <div class="container">
             <img src="https://avatars.githubusercontent.com/u/131959167?v=4" alt="Your Name" class="profile-img animate-fade-in">
-            <h1 class="animate-slide-up">Hi! I'm erivero-p</h1>
-            <p class="lead animate-slide-up">I'm Elisa, a 42 student based in Malaga, Spain. Currently, I'm finishing the Common Core and specializing in web development.</p>
+            <h1 class="animate-slide-up" data-translate-key="greeting" >Hi! I'm erivero-p</h1>
+            <p class="lead animate-slide-up" data-translate-key="intro">I'm Elisa, a 42 student based in Malaga, Spain. Currently, I'm finishing the Common Core and specializing in web development.</p>
+            <div class="skills mt-4">
+                <h3 class="animate-slide-up">Skills I'm working on:</h3>
+                <ul class="list-inline animate-slide-up">
+                    <li class="list-inline-item"><span class="badge bg-secondary">C</span></li>
+                    <li class="list-inline-item"><span class="badge bg-secondary">C++</span></li>
+                    <li class="list-inline-item"><span class="badge bg-secondary">JS</span></li>
+                    <li class="list-inline-item"><span class="badge bg-secondary">React</span></li>
+                </ul>
+            </div>
         </div>
     </header>
     <!-- Currently Working On Section -->
@@ -24,12 +44,7 @@
             <h2 class="text-center mb-5 animate-fade-in">Currently working on</h2>
             <div class="row">
                 <h3 class="animate-slide-up text-center">ft_transcendence</h3>
-                <p class="lead animate-slide-up">
-                    ft_transcendence is a multiplayer web-based single page application developed as the final project of the 42 Common Core. 
-                    It combines a real-time gaming experience with social features, including user authentication, 
-                    game invitations, and customizable profiles. 
-                    It is a group project, and I'm in charge of the front-end development, which is required to be implemented in vanilla JavaScript.
-                </p>
+                <p data-translate-key="transcendence-description" class="lead animate-slide-up"></p>
                 <div class="row w-100 d-flex justify-content-center">
                     <div class="col-12 mb-4">
                         <img src="assets/home.gif" alt="ft_transcendence home" class="img-fluid rounded animate-fade-in">
@@ -53,7 +68,7 @@
             <h2 class="text-center mb-5 animate-fade-in">Recent Projects</h2>
             <h3 class="text-center mb-5 animate-fade-in">
                 42 x Globant: FullStack Piscine
-                <i class="fas fa-question-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="The FullStack Piscine is a two weeks pedagogical project based course, in collaboration with Globant, aimed at learning the basics of web development technologies such as React."></i>
+                <i class="fas fa-question-circle ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-translate-key="tooltipTitle" title="The FullStack Piscine is a two weeks pedagogical project based course, in collaboration with Globant, aimed at learning the basics of web development technologies such as React."></i>
             </h3>
             <div class="row d-flex align-items-center justify-content-center">
                 <h4 class="animate-slide-up">2048 Emulation</h4>
@@ -84,10 +99,8 @@
             <p>contact: <a href="mailto:erivero.code@gmail.com">erivero.code@gmail.com</a></p>
         </div>
     </footer>
-    <!-- <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="2048/2048.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 </html>
-
